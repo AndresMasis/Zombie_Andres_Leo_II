@@ -3,7 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/ProjectAndresLeo.java</file>
+            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/BaseClass.java</file>
+            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/BaseHero.java</file>
+            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/BaseZombie.java</file>
+            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/WeakZombie.java</file>
+            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/Map.java</file>
+            <file>file:/C:/Users/Andrés/Documents/NetBeansProjects/ProjectAndresLeo/src/projectandresleo/Main.java</file>
         </group>
     </open-files>
 </project-private>
