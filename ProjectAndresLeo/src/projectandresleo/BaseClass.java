@@ -9,7 +9,7 @@ package projectandresleo;
  * @author Andrés
  */
 public abstract class BaseClass {
-    
+
     // atributtes
     protected int damage;
     protected int speed;
@@ -17,15 +17,20 @@ public abstract class BaseClass {
     protected int horizontalPosition;
     protected int verticalPosition;
     protected String type;
-    protected int turn;
-    
-    
+    protected boolean jump;
+    protected int turns;
+
     // methods
-    public void attack(BaseClass enemy){
-        // Substracts life of the character who is being attacked
-        enemy.resistance -= this.damage;
+    public void attack(BaseClass enemy) {
+        // Checks that the enemy is really an enemy
+        if (enemy.type != this.type) {
+            // Substracts life of the character who is being attacked
+            enemy.resistance -= this.damage;
+        }
     }
+
     public abstract void move(String[][] matrix, BaseClass[][] position);
+
     public abstract void applyTurn();
-    
+
 }
