@@ -16,18 +16,11 @@ public abstract class BaseClass {
     protected int resistance;
     protected int horizontalPosition;
     protected int verticalPosition;
-    protected String type;
     protected boolean jump;
     protected int turns;
 
     // methods
-    public void attack(BaseClass enemy) {
-        // Checks that the enemy is really an enemy
-        if (enemy.type != this.type) {
-            // Substracts life of the character who is being attacked
-            enemy.resistance -= this.damage;
-        }
-    }
+    public abstract boolean attack(BaseClass enemy);
 
     public abstract void move(String[][] matrix, BaseClass[][] position);
 

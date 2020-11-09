@@ -7,21 +7,29 @@ package projectandresleo;
 
 import java.util.LinkedList;
 
-public class BaseHero extends BaseClass {
+public abstract class BaseHero extends BaseClass {
 
     // Attributes
-    protected LinkedList<Items> ownedItems = new LinkedList<Items>();
-    protected String category;
+    protected LinkedList<Items> ownedItems = new LinkedList<>();
+    int maxStorage;
 
     // Methods
     @Override
+    public boolean attack(BaseClass enemy) {
+        // Nothing yet
+        return true;
+    }
+
+    @Override
     public void move(String[][] matrix, BaseClass[][] position) {
         // Nothing yet
+        // This method must be done by Leo
     }
 
     @Override
     public void applyTurn() {
-
+        // Nothing yet
+        // This method must be done by Leo
     }
 
     // Grabs an item
@@ -31,8 +39,12 @@ public class BaseHero extends BaseClass {
             // Has not selected any item
             System.out.println("ERROR"
                     + "\nNo has seleccionado ningun objeto.");
+
+        } else if (ownedItems.size() > maxStorage) {
+            // Coludnt pack the item
+            System.out.println("El inventario esta lleno"
+                    + "\nPor lo tanto no puedes agarrar ese item");
         } else {
-            // Gets the item
             this.ownedItems.add(item);
         }
     }
@@ -60,7 +72,7 @@ public class BaseHero extends BaseClass {
     // Takes off an item
     public void unequipItem(Items item) {
         // Restrictions
-        if (item == null || item.amount == 0) {
+        if (item == null) {
             // No se ha seleccionado ningun objeto o ya no se posee
             System.out.println("ERROR"
                     + "\nNo has seleccionado ningun objeto.");
@@ -78,41 +90,43 @@ public class BaseHero extends BaseClass {
         }
     }
 
+    public abstract void changeSpecialStats(Items item, int operation);
+
     // Put the stats that the item increases to the hero
     public void assignStats(Items item) {
-        // Checks if is a special hero
-        if (item.type.equals("weapon") && this.equals("destroyer")) {
-            // Destroyer increases the damage of all weapons
-            item.damage -= 3;
-        } else if (item.type.equals("weapon") && item.range > 1 && this.equals("snipper")){
-            // Snipper increases the range damage of long range weapons
-            item.damage -= 3;
-            item.range -= 3;
+        // If needed modifies the stats of the item depending on the character
+        this.changeSpecialStats(item, 1);
+        // Checks what kind of item enters
+        if (item instanceof Weapon) {
+            // It is a weapon
+            this.damage += ((Weapon) item).damage;
+        } else if (item instanceof Weapon){
+            // It is an armor
+            this.resistance += ((Armor) item).resistance;
         }
-
-        // Decreases the stats
-        this.damage += item.damage;
-        this.resistance += item.resistance;
+        this.changeSpecialStats(item, 2);
     }
 
     // Removes the stats that the item increases to the hero
     public void quitStats(Items item) {
-        // Checks if is a special hero
-        if (item.type.equals("weapon") && this.equals("destroyer")) {
-            // Destroyer increases the damage of all weapons
-            item.damage += 3;
-        } else if (item.type.equals("weapon") && item.range > 1 && this.equals("snipper")){
-            // Snipper increases the range damage of long range weapons
-            item.damage += 3;
-            item.range += 3;
+        // If needed modifies the stats of the item depending on the character
+        this.changeSpecialStats(item, 2);
+
+        // Checks what kind of item enters
+        if (item instanceof Weapon) {
+            // It is a weapon
+            this.damage -= ((Weapon) item).damage;
+        } else if (item instanceof Armor){
+            // It is an armor
+            this.resistance -= ((Armor) item).resistance;
         }
-        
-        // Decreases the stats
-        this.damage -= item.damage;
-        this.resistance -= item.resistance;
     }
 }
 
+/*
+Useful layers 
+Use final because wont be inherited
+ */
 final class Destroyer extends BaseHero {
 
     // Has more damage and resistance
@@ -121,11 +135,23 @@ final class Destroyer extends BaseHero {
         this.resistance = 35;
         this.speed = 3;
         this.turns = 1;
-        this.type = "hero";
-        this.category = "destroyer";
         this.jump = false;
         this.verticalPosition = verticalPosition;
         this.horizontalPosition = horizontalPosition;
+    }
+
+    // Increases the damage of any weapon
+    @Override
+    public void changeSpecialStats(Items item, int operation) {
+        if (item instanceof Weapon) {
+            if (operation == 1) {
+                //Sums the stat
+                ((Weapon) item).damage += 3;
+            } else {
+                //Substracts the stat
+                ((Weapon) item).damage -= 3;
+            }
+        }
     }
 }
 
@@ -137,27 +163,44 @@ final class Explorer extends BaseHero {
         this.resistance = 25;
         this.speed = 5;
         this.turns = 1;
-        this.type = "hero";
-        this.category = "explorer";
         this.jump = true;
         this.verticalPosition = verticalPosition;
         this.horizontalPosition = horizontalPosition;
+    }
+
+    @Override
+    public void changeSpecialStats(Items item, int operation) {
+        // This hero does not modify any special stat
     }
 
 }
 
 final class Snipper extends BaseHero {
 
-    // Has double turn, increases the damage and the range of the long range weapon
+    // Has double turn
     public Snipper(int verticalPosition, int horizontalPosition) {
         this.damage = 3;
         this.resistance = 15;
         this.speed = 2;
         this.turns = 2;
-        this.type = "hero";
-        this.category = "snipper";
         this.jump = false;
         this.verticalPosition = verticalPosition;
         this.horizontalPosition = horizontalPosition;
+    }
+
+    // Increases the damage and the range of the long range weapon
+    @Override
+    public void changeSpecialStats(Items item, int operation) {
+        if (item instanceof LongRangeWeapon) {
+            if (operation == 1) {
+                //Sums the stat
+                ((LongRangeWeapon) item).damage += 3;
+                ((LongRangeWeapon) item).range += 4;
+            } else {
+                //Substracts the stat
+                ((LongRangeWeapon) item).damage -= 3;
+                ((LongRangeWeapon) item).range -= 4;
+            }
+        }
     }
 }
