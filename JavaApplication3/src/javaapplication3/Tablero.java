@@ -7,13 +7,13 @@ public class Tablero {
     /*
     0 = vacio
     1 = base
-    2 = personaje 1 snipper
-    3 = personaje 2 
-    4 = personaje 3
+    2 = hero 1 snipper
+    3 = hero 2 
+    4 = hero 3
     5 = zombie 1
     6 = zombie 2
     7 = zombie 3
-    8 = obstaculo
+    8 = obstacle
     9 = spawn
     10 = sword
     11 = axe

@@ -632,46 +632,46 @@ public final class Interface extends javax.swing.JFrame {
         int I = 1;
         int check = 0;      
         
-        while(I != weakZom.vision+1){
-            if(20 == tablero.tablero[X-I][Y-I]){
+        while(I != weakZom.vision+2){
+            if(4 >= tablero.tablero[X-I][Y-I] && tablero.tablero[X-I][Y-I] >= 2){
                 X-= I;
                 Y-= I;
                 check = 1;
                 break;
             }
-            else if(20 == tablero.tablero[X][Y-I]){
+            else if(4 >= tablero.tablero[X][Y-I] && tablero.tablero[X][Y-I] >= 2){
                 Y-= I;
                 check = 1;
                 break;
             }
-            else if(20 == tablero.tablero[X+I][Y-I]){
+            else if(4 >= tablero.tablero[X+I][Y-I] && tablero.tablero[X+I][Y-I] >= 2){
                 X+= I;
                 Y-= I;
                 check = 1;
                 break;
             }
-            else if(20 ==  tablero.tablero[X-I][Y]){
+            else if(4 >= tablero.tablero[X-I][Y] && tablero.tablero[X-I][Y] >= 2){
                 X-= I;
                 check = 1;
                 break;
             }
-            else if(20 ==  tablero.tablero[X+I][Y]){
+            else if(4 >= tablero.tablero[X+I][Y] && tablero.tablero[X+I][Y] >= 2){
                 X+= I;
                 check = 1;
                 break;
             }
-            else if(20 ==  tablero.tablero[X-I][Y+I]){
+            else if(4 >= tablero.tablero[X-I][Y+I] && tablero.tablero[X-I][Y+I] >= 2){
                 Y+= I;
                 X-= I;
                 check = 1;
                 break;
             }
-            else if(20 ==  tablero.tablero[X][Y+I]){
+            else if(4 >= tablero.tablero[X][Y+I] && tablero.tablero[X][Y+I] >= 2){
                 Y+= I;
                 check = 1;
                 break;
             }
-            else if(20 ==  tablero.tablero[X+I][Y+I]){
+            else if(4 >= tablero.tablero[X+I][Y+I] && tablero.tablero[X+I][Y+I] >= 2){
                 Y+= I;
                 X+= I;
                 check = 1;
@@ -679,49 +679,49 @@ public final class Interface extends javax.swing.JFrame {
             }   
             
             if (I >= 2){
-                if(20 ==  tablero.tablero[X-1][Y-I]){
+                if(4 >= tablero.tablero[X-1][Y-I] && tablero.tablero[X-1][Y-I] >= 2){
                     X-= 1;
                     Y-= I;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+1][Y-I]){
+                else if(4 >= tablero.tablero[X+1][Y-I] && tablero.tablero[X+1][Y-I] >= 2){
                     Y-= I;
                     X+= 1;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+I][Y+1]){
+                else if(4 >= tablero.tablero[X+I][Y+1] && tablero.tablero[X+I][Y+1] >= 2){
                     X+= I;
                     Y+= 1;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+I][Y-1]){
+                else if(4 >= tablero.tablero[X+I][Y-1] && tablero.tablero[X+I][Y-1] >= 2){
                     X+= I;
                     Y-= 1;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X-I][Y+1]){
+                else if(4 >= tablero.tablero[X-I][Y+1] && tablero.tablero[X-I][Y+1] >= 2){
                     X-= I;
                     Y+= 1;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X-I][Y-1]){
+                else if(4 >= tablero.tablero[X-I][Y-1] && tablero.tablero[X-I][Y-1] >= 2){
                     Y-= 1;
                     X-= I;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X-1][Y+I]){
+                else if(4 >= tablero.tablero[X-1][Y+I] && tablero.tablero[X-1][Y+I] >= 2){
                     Y+= I;
                     X-= 1;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+1][Y+I]){
+                else if(4 >= tablero.tablero[X+1][Y+I] && tablero.tablero[X+1][Y+I] >= 2){
                     Y+= I;
                     X+= 1;
                     check = 1;
@@ -730,49 +730,49 @@ public final class Interface extends javax.swing.JFrame {
             }
             
             if (I >= 3){
-                if(20 ==  tablero.tablero[X-2][Y-I]){
+                if(4 >= tablero.tablero[X-2][Y-I] && tablero.tablero[X-2][Y-I] >= 2){
                     X-= 2;
                     Y-= I;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+2][Y-I]){
+                else if(4 >= tablero.tablero[X+2][Y-I] && tablero.tablero[X+2][Y-I] >= 2){
                     Y-= I;
                     X+= 2;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+I][Y+2]){
+                else if(4 >= tablero.tablero[X+I][Y+2] && tablero.tablero[X+I][Y+2] >= 2){
                     X+= I;
                     Y+= 2;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+I][Y-2]){
+                else if(4 >= tablero.tablero[X+I][Y-2] && tablero.tablero[X+I][Y-2] >= 2){
                     X+= I;
                     Y-= 2;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X-I][Y+2]){
+                else if(4 >= tablero.tablero[X-I][Y+2] && tablero.tablero[X-I][Y+2] >= 2){
                     X-= I;
                     Y+= 2;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X-I][Y-2]){
+                else if(4 >= tablero.tablero[X-I][Y-2] && tablero.tablero[X-I][Y-2] >= 2){
                     Y-= 2;
                     X-= I;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X-2][Y+I]){
+                else if(4 >= tablero.tablero[X-2][Y+I] && tablero.tablero[X-2][Y+I] >= 2){
                     Y+= I;
                     X-= 2;
                     check = 1;
                     break;
                 }
-                else if(20 ==  tablero.tablero[X+2][Y+I]){
+                else if(4 >= tablero.tablero[X+2][Y+I] && tablero.tablero[X+2][Y+I] >= 2){
                     Y+= I;
                     X+= 2;
                     check = 1;
@@ -786,7 +786,23 @@ public final class Interface extends javax.swing.JFrame {
         }
         check = 0;
         
-        
+        int hero = tablero.tablero[X][Y];
+        int sound = 0;
+        if (hero == 2){
+            sound = snipper1.noise;
+        }
+        else if(hero == 3){
+            sound = explorer1.noise;
+        }
+        else if(hero == 4){
+            sound = destroyer1.noise;
+        }
+        else{
+            return 0;
+        }
+        if(sound <= 1){
+            return 0;
+        }
         if(X > weakZom.horizontalPosition){
             if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition] == 0){
                 tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
@@ -1719,7 +1735,7 @@ public final class Interface extends javax.swing.JFrame {
             Y++;
             X++;
         }
-        
+        int lleno = 0;
         if (X != turnOff.horizontalPosition || Y != turnOff.verticalPosition){
             int count = 0;
             while(count != 20){
@@ -1732,6 +1748,7 @@ public final class Interface extends javax.swing.JFrame {
                             textRes.setText("Agarraste una espada");
                         }else{
                             textRes.setText(" No puedes agarrar mas objetos tienes el inventario lleno");
+                            lleno=1;
                         }
                         break;                
                     }
@@ -1745,6 +1762,7 @@ public final class Interface extends javax.swing.JFrame {
                             textRes.setText("Agarraste un hacha");
                         }else{
                             textRes.setText(" No puedes agarrar mas objetos tienes el inventario lleno");
+                            lleno=1;
                         }
                         break;
                     }    
@@ -1758,6 +1776,7 @@ public final class Interface extends javax.swing.JFrame {
                             textRes.setText("Agarraste un rifle");
                         }else{
                             textRes.setText("No puedes agarrar mas objetos tienes el inventario lleno");
+                            lleno=1;
                         }
                         break;
                     }  
@@ -1772,6 +1791,7 @@ public final class Interface extends javax.swing.JFrame {
                         }
                         else{
                             textRes.setText("No puedes agarrar mas objetos tienes el inventario lleno");
+                            lleno=1;
                         }
                         break;
                     }
@@ -1781,7 +1801,10 @@ public final class Interface extends javax.swing.JFrame {
         }
         else{
             textRes.setText("No encontraste nada en el suelo.");
-        }       
+        } 
+        if (lleno == 1){
+            textRes.setText("No puedes agarrar mas objetos tienes el inventario lleno");
+        }
         
     }//GEN-LAST:event_getObjActionPerformed
 

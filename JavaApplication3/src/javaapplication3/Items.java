@@ -28,7 +28,7 @@ class Axe extends Items {
         this.equipped = false;
         this.amount = 0;
         this.range = 1;
-        this.noise = 0;
+        this.noise = 1;
         this.damage = 3; 
         this.resistance = 0;  
     }
@@ -41,7 +41,7 @@ class Sword extends Items{
         this.equipped = false;
         this.amount = 0;
         this.range = 1;
-        this.noise = 0;
+        this.noise = 1;
         this.damage = 5;  
         this.resistance = 0;  
     }
@@ -55,7 +55,7 @@ class Rifle extends Items{
         this.equipped = false;
         this.amount = 0;
         this.range = 5;
-        this.noise = 4;
+        this.noise = 5;
         this.damage = 5;  
         this.resistance = 0;  
     }
