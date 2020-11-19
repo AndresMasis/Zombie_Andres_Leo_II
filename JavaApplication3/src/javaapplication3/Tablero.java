@@ -15,11 +15,23 @@ public class Tablero {
     7 = zombie 3
     8 = obstaculo
     9 = spawn
-    10 = item
+    10 = sword
+    11 = axe
+    12 = gun
+    13 = rifle 
+    20 = ruido
     */
      public void Tablero(){
        int fila = 0;
-       int columna = 0;            
+       int columna = 0;   
+       while (columna != 25){
+           while (fila != 25){   
+               tablero[fila][columna] = 8;
+               fila++;
+           }
+           fila = 0;
+           columna++;                
+       }
        fila = 5;
        columna = 5;
        while (columna != 15){
@@ -47,10 +59,10 @@ public class Tablero {
         tablero[9][5] = 8;    
         
         
-        tablero[19][5] = 9;   
-        tablero[19][9] = 9;   
-        tablero[17][7] = 9; 
-        tablero[17][12] = 9; 
+        tablero[19][5] = 9;  
+        
+        
+
      }
      
    

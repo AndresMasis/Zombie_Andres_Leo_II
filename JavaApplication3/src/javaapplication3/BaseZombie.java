@@ -35,7 +35,7 @@ class WeakZombie extends BaseZombie {
         this.type = "zombie";
         this.verticalPosition = verticalPosition;
         this.horizontalPosition = horizontalPosition;
-        this.vision = 2;
+        this.vision = 3;
         this.numT = 5;
     }
 }
@@ -52,7 +52,7 @@ class FastZombie extends BaseZombie {
         this.type = "zombie";
         this.verticalPosition = verticalPosition;
         this.horizontalPosition = horizontalPosition;
-        this.vision = 3;
+        this.vision = 2;
         this.numT = 6;
     }
 }
@@ -69,7 +69,7 @@ class StrongZombie extends BaseZombie {
         this.type = "zombie";
         this.verticalPosition = verticalPosition;
         this.horizontalPosition = horizontalPosition;
-        this.vision = 3;
+        this.vision = 2;
         this.numT = 7;
     }
 }

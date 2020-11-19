@@ -45,77 +45,241 @@ public final class Interface extends javax.swing.JFrame {
     Snipper snipper1 = null;    
     Explorer explorer1 = null;
     Destroyer destroyer1 = null; 
+    
+    Snipper[] spawns = new Snipper[4];  // weuse the class sniper for the spawns for the positions only
+    
+    
+    WeakZombie[] weakZom = new WeakZombie[50];
+    FastZombie[] fastZom = new FastZombie[50];
+    StrongZombie[] strongZom = new StrongZombie[50];   
 
-    WeakZombie[] weakZom = new WeakZombie[20];
-    FastZombie[] fastZom = new FastZombie[5];
-    StrongZombie[] strongZom = new StrongZombie[5];   
 
+    Items[] sword = new Sword[20];
+    Items[] axe = new Axe[20];
+    Items[] rifle = new Rifle[20];
+    Items[] smallGun = new SmallGun[20];  
+    
     JLabel pjSel;
     JLabel zomB;
     BaseClass clas;
     
     BaseClass turnOff;
     int turn = 1;
+    int checkTurn = -1;
     int mov;
     int att;
     int obj;
     int level = 1;
     int checkLev = 1;
+    int clenaIt = 0;
     
     public Interface() throws IOException{
-        tablero.Tablero();               
+        setZomN();
+        tablero.Tablero();            
         this.initComponents();       
         this.setLocationRelativeTo(null); 
         setTableroJ(); 
-        refresh();     
+        refresh();  
+    }
+    void showEst(){
+        int pj = turnOff.numT-1;
+        
+        estad.setText(" Turno de PJ "+pj+" \n Daño: "+turnOff.damage+"\n Vida: "+turnOff.resistance+"\n Velocidad:"+turnOff.speed+"\nTurnos: "+turnOff.turns);
+        textLev.setText("Level "+level);        
+    }
+    void levelUp(){
+        if (level == 5){
+            snipper1.turns+=2;
+            explorer1.turns+=3;
+            destroyer1.turns+=1;
+            snipper1.resistance+=3;
+            explorer1.resistance+=4;
+            destroyer1.resistance+=10;
+        }
+        if (level == 10){
+            snipper1.turns+=2;
+            explorer1.turns+=1;
+            destroyer1.turns+=1;
+            snipper1.resistance+=3;
+            explorer1.resistance+=3;
+            destroyer1.resistance+=3;
+            snipper1.damage+=3;
+            explorer1.damage+=3;
+            destroyer1.damage+=3;
+        } 
+        if (level == 13){
+            snipper1.resistance+=1;
+            explorer1.resistance+=3;
+            destroyer1.resistance+=5;
+        } 
+        if (level == 15){
+            snipper1.turns+=1;
+            explorer1.turns+=1;
+            destroyer1.turns+=1;
+            snipper1.resistance+=1;
+            explorer1.resistance+=3;
+            destroyer1.resistance+=10;
+            snipper1.damage+=5;
+            explorer1.damage+=2;
+            destroyer1.damage+=1;
+        }        
+        
     }
     
+    void setZomN(){
+        int count = 0;        
+        while (count != 50){
+            weakZom[count]=null;
+            fastZom[count]=null;
+            strongZom[count]=null;  
+            count++;
+        }
+        count = 0;
+        while (count != 20){
+            sword[count]=null;
+            axe[count]=null;
+            rifle[count]=null;  
+            smallGun[count]=null;
+            count++;
+        }
+    }         
+            
      void searchTurn(){ 
-        if (turn == 1){
-           turnOff = snipper1;                
+        if(checkTurn==-1){
+            if (turn == 1){
+               turnOff = snipper1;                
+            }
+            else if (turn == 2){            
+               turnOff = explorer1;            
+            }
+            else if (turn == 3){            
+               turnOff = destroyer1;
+           }
+           mov = turnOff.turns;
+           att = turnOff.turns;
+           obj = turnOff.turns;
+           checkTurn = 0;
         }
-        else if (turn == 2){            
-           turnOff = explorer1;            
+        if(snipper1.resistance < 0 && turn == 1){
+            changeTurn();
+        }  
+        if(explorer1.resistance < 0 && turn==2){
+            changeTurn();
         }
-        else if (turn == 3){            
-           turnOff = destroyer1;
-       }
-       mov = turnOff.turns;
-       att = turnOff.turns;
-       obj = turnOff.turns;        
+        if(destroyer1.resistance < 0 && turn==3){
+            changeTurn();
+        }
+                
     }
     void movZombs2(){
-        movZombs();
-        spawnZom();
+        movZombs();         
+        spawnZom();       
     }
-     
+    
     void changeTurn(){
-        if (turn == 3){ 
-            turn = 1;
+        if (turn == 3){
             movZombs2(); 
-            checkLev++;
+            checkLev++;  
+            clenaIt = 0;
+            turn = 1;
         }else{
             turn++;
         }
         
         if(checkLev == 3){
             level++;
+            levelUp();
+            if (level == 20){
+                JOptionPane.showMessageDialog(null, "YOU WIN");
+                    Timer timer = new Timer(1000, new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                            System.exit(0);
+                        }
+                    });
+                    timer.start(); 
+            }
             checkLev = 1;
+            clenaIt = 1;
         }
+        checkTurn = -1;
+        int i =turnOff.numT-1;
     }
     void spawnZom(){
-        
-        if (level == 1){
-        
+        int random;
+        int zomP;
+        if (level >= 1){            
+            random = (int) Math.floor(Math.random()*(2)+1); //random between 1 and 3            
+            if(random >= 1){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[18][5] == 0){
+                    tablero.tablero[18][5]=zomP;
+                }
+            }            
+            if(random >= 2){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[19][6] == 0){
+                    tablero.tablero[19][6]=zomP;  
+                }
+            }            
         }
-        if (level == 2){
-        
+        if (level >= 5){            
+            random = (int) Math.floor(Math.random()*(2)+1); //random between 1 and 3            
+            if(random >= 1){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[19][8] == 0){
+                    tablero.tablero[19][8]=zomP;
+                }
+            }            
+            if(random >= 2){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[18][9] == 0){                    
+                    tablero.tablero[18][9]=zomP;
+                }            
+            }             
         }
-        if (level == 3){
-        
+        if (level >= 10){            
+            random = (int) Math.floor(Math.random()*(3)+1); //random between 1 and 3
+            
+            if(random >= 1){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[17][6] == 0){
+                    tablero.tablero[17][6]=zomP;
+                }
+            }            
+            if(random >= 2){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                 if(tablero.tablero[16][7] == 0){
+                    tablero.tablero[16][7]=zomP;
+                 }            
+            }               
+            if(random >= 3){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[17][8] == 0){
+                    tablero.tablero[17][8]=zomP;            
+                }
+            }
         }
-        if (level == 4){
-        
+        if (level >= 15){
+            random = (int) Math.floor(Math.random()*(3)+1); //random between 1 and 3
+            
+            if(random >= 1){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[17][11] == 0){
+                    tablero.tablero[17][11]=zomP;
+                }
+            }            
+            if(random >= 2){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[16][12] == 0){
+                    tablero.tablero[16][12]=zomP;            
+                }
+            }               
+            if(random >= 3){
+                zomP = (int) Math.floor(Math.random()*(7-5+1)+5); //random between 5 and 7
+                if(tablero.tablero[17][13] == 0){
+                    tablero.tablero[17][13]=zomP;            
+                }
+            }
         }
     
     }
@@ -123,6 +287,7 @@ public final class Interface extends javax.swing.JFrame {
     int movToHeroe(BaseZombie weakZom,WeakZombie[] W,FastZombie[] F,StrongZombie[] S,int count){
         int X = weakZom.horizontalPosition;
         int Y = weakZom.verticalPosition;
+        int movZ = weakZom.speed;
         int I = 1;
         int check = 0;      
         
@@ -278,22 +443,22 @@ public final class Interface extends javax.swing.JFrame {
         if(check == 0){
             return 0;
         }
-        System.out.println("--------4 X = " +X+" Y = "+Y);
         check = 0;
         
+        
         if(X > weakZom.horizontalPosition){
-            if (tablero.tablero[weakZom.horizontalPosition+1][weakZom.verticalPosition] == 0){
+            if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition] == 0){
                 tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                weakZom.horizontalPosition++;                
-                tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                weakZom.horizontalPosition+=movZ;                
+                tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;  
                 check = 1;
             }
         }
         if (check == 0){
             if(X < weakZom.horizontalPosition){
-                if (tablero.tablero[weakZom.horizontalPosition-1][weakZom.verticalPosition] == 0){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition] == 0){
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                    weakZom.horizontalPosition--;                
+                    weakZom.horizontalPosition-=movZ;                
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
                     check = 1;
                 }
@@ -301,23 +466,71 @@ public final class Interface extends javax.swing.JFrame {
         }
         if (check == 0){
             if(Y > weakZom.verticalPosition){
-                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition+1] == 0){
+                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition+movZ] == 0){
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                    weakZom.verticalPosition++;                
+                    weakZom.verticalPosition+=movZ;                
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
                     check = 1;
                 }
-            }            
+            }    
         }
-        if (check == 0){ 
+        if (check == 0){
             if(Y < weakZom.verticalPosition){
-                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition-1] == 0){
+                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition-movZ] == 0){
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                    weakZom.verticalPosition--;                
+                    weakZom.verticalPosition-=movZ;                
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
                     check = 1;
                 }
-            }
+            }    
+        }
+               if (check == 0){
+            if(Y < weakZom.verticalPosition && X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;     
+                    weakZom.horizontalPosition-=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }       
+        if (check == 0){
+            if(Y > weakZom.verticalPosition && X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;     
+                    weakZom.horizontalPosition-=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y > weakZom.verticalPosition && X > weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;     
+                    weakZom.horizontalPosition+=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y < weakZom.verticalPosition && X > weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;     
+                    weakZom.horizontalPosition+=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }  
+
+        if (check == 0){
+            return 0;
         }
         
         if(W != null){
@@ -339,37 +552,37 @@ public final class Interface extends javax.swing.JFrame {
                 this.snipper1.resistance -= weakZom.damage;                
                 if(snipper1.resistance <= 0){                
                     tablero.tablero[snipper1.horizontalPosition][snipper1.verticalPosition] = 0;
-                    System.out.println("Murio el PJ 1");
+                    textRes.setText(textRes.getText()+"\nMurio el PJ 1");
                 }else{
-                    System.out.println("El zombie le pego a PJ 1 "+weakZom.damage+" de daño \n le queda "+snipper1.resistance+" de vida");
+                    textRes.setText(textRes.getText()+"\nEl zombie le pego a PJ 1 "+weakZom.damage+" de daño \n le queda "+snipper1.resistance+" de vida");
                 }                
             }
             else if (Y == explorer1.verticalPosition && X == explorer1.horizontalPosition){
                 this.explorer1.resistance -= weakZom.damage;
                 if(explorer1.resistance <= 0){                
                     tablero.tablero[explorer1.horizontalPosition][explorer1.verticalPosition] = 0;
-                    System.out.println("Murio el PJ 2");
+                    textRes.setText(textRes.getText()+"\nMurio el PJ 2");
                 }else{
-                    System.out.println("El zombie le pego a PJ 2 "+weakZom.damage+" de daño \n le queda "+explorer1.resistance+" de vida");
+                    textRes.setText(textRes.getText()+"\nEl zombie le pego a PJ 2 "+weakZom.damage+" de daño \n le queda "+explorer1.resistance+" de vida");
                 }
             }
             else if (Y == destroyer1.verticalPosition && X == destroyer1.horizontalPosition){
                 this.destroyer1.resistance -= weakZom.damage;
                 if(destroyer1.resistance <= 0){                
                     tablero.tablero[destroyer1.horizontalPosition][destroyer1.verticalPosition] = 0;
-                    System.out.println("Murio el PJ 3");
+                    textRes.setText(textRes.getText()+"\nMurio el PJ 3");
                 }else{
-                    System.out.println("El zombie le pego a PJ 3 "+weakZom.damage+" de daño \n le queda "+destroyer1.resistance+" de vida");
+                    textRes.setText(textRes.getText()+"\nEl zombie le pego a PJ 3 "+weakZom.damage+" de daño \n le queda "+destroyer1.resistance+" de vida");
                 }                
             }
             else if(Y == 14 && X == 5){
                 JOptionPane.showMessageDialog(null, "GAME OVER");
-                Timer timer = new Timer(1000, new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                        System.exit(0);
-                    }
-                });
-                timer.start();                
+                    Timer timer = new Timer(1000, new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                            System.exit(0);
+                        }
+                    });
+                    timer.start();                
             }
     }
     
@@ -412,28 +625,181 @@ public final class Interface extends javax.swing.JFrame {
         return 1;
     }
     
-    int movToSound(BaseZombie weakZom){
-    
-        return 0;
-    }
-    int movToBase(BaseZombie weakZom,WeakZombie[] W,FastZombie[] F,StrongZombie[] S,int count){
-        int X = 5;
-        int Y = 14;      
-        int check = 0;   
+    int movToSound(BaseZombie weakZom,WeakZombie[] W,FastZombie[] F,StrongZombie[] S,int count){
+        int X = weakZom.horizontalPosition;
+        int Y = weakZom.verticalPosition;
+        int movZ = weakZom.speed;
+        int I = 1;
+        int check = 0;      
+        
+        while(I != weakZom.vision+1){
+            if(20 == tablero.tablero[X-I][Y-I]){
+                X-= I;
+                Y-= I;
+                check = 1;
+                break;
+            }
+            else if(20 == tablero.tablero[X][Y-I]){
+                Y-= I;
+                check = 1;
+                break;
+            }
+            else if(20 == tablero.tablero[X+I][Y-I]){
+                X+= I;
+                Y-= I;
+                check = 1;
+                break;
+            }
+            else if(20 ==  tablero.tablero[X-I][Y]){
+                X-= I;
+                check = 1;
+                break;
+            }
+            else if(20 ==  tablero.tablero[X+I][Y]){
+                X+= I;
+                check = 1;
+                break;
+            }
+            else if(20 ==  tablero.tablero[X-I][Y+I]){
+                Y+= I;
+                X-= I;
+                check = 1;
+                break;
+            }
+            else if(20 ==  tablero.tablero[X][Y+I]){
+                Y+= I;
+                check = 1;
+                break;
+            }
+            else if(20 ==  tablero.tablero[X+I][Y+I]){
+                Y+= I;
+                X+= I;
+                check = 1;
+                break;
+            }   
+            
+            if (I >= 2){
+                if(20 ==  tablero.tablero[X-1][Y-I]){
+                    X-= 1;
+                    Y-= I;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+1][Y-I]){
+                    Y-= I;
+                    X+= 1;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+I][Y+1]){
+                    X+= I;
+                    Y+= 1;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+I][Y-1]){
+                    X+= I;
+                    Y-= 1;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X-I][Y+1]){
+                    X-= I;
+                    Y+= 1;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X-I][Y-1]){
+                    Y-= 1;
+                    X-= I;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X-1][Y+I]){
+                    Y+= I;
+                    X-= 1;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+1][Y+I]){
+                    Y+= I;
+                    X+= 1;
+                    check = 1;
+                    break;
+                }
+            }
+            
+            if (I >= 3){
+                if(20 ==  tablero.tablero[X-2][Y-I]){
+                    X-= 2;
+                    Y-= I;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+2][Y-I]){
+                    Y-= I;
+                    X+= 2;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+I][Y+2]){
+                    X+= I;
+                    Y+= 2;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+I][Y-2]){
+                    X+= I;
+                    Y-= 2;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X-I][Y+2]){
+                    X-= I;
+                    Y+= 2;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X-I][Y-2]){
+                    Y-= 2;
+                    X-= I;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X-2][Y+I]){
+                    Y+= I;
+                    X-= 2;
+                    check = 1;
+                    break;
+                }
+                else if(20 ==  tablero.tablero[X+2][Y+I]){
+                    Y+= I;
+                    X+= 2;
+                    check = 1;
+                    break;
+                }
+            }
+        I++;
+        }
+        if(check == 0){
+            return 0;
+        }
+        check = 0;
+        
         
         if(X > weakZom.horizontalPosition){
-            if (tablero.tablero[weakZom.horizontalPosition+1][weakZom.verticalPosition] == 0){
+            if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition] == 0){
                 tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                weakZom.horizontalPosition++;                
-                tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                weakZom.horizontalPosition+=movZ;                
+                tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;  
                 check = 1;
             }
         }
         if (check == 0){
             if(X < weakZom.horizontalPosition){
-                if (tablero.tablero[weakZom.horizontalPosition-1][weakZom.verticalPosition] == 0){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition] == 0){
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                    weakZom.horizontalPosition--;                
+                    weakZom.horizontalPosition-=movZ;                
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
                     check = 1;
                 }
@@ -441,23 +807,183 @@ public final class Interface extends javax.swing.JFrame {
         }
         if (check == 0){
             if(Y > weakZom.verticalPosition){
-                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition+1] == 0){
+                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition+movZ] == 0){
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                    weakZom.verticalPosition++;                
+                    weakZom.verticalPosition+=movZ;                
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
                     check = 1;
                 }
-            }            
+            }    
         }
-        if (check == 0){ 
+        if (check == 0){
             if(Y < weakZom.verticalPosition){
-                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition-1] == 0){
+                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition-movZ] == 0){
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
-                    weakZom.verticalPosition--;                
+                    weakZom.verticalPosition-=movZ;                
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+               if (check == 0){
+            if(Y < weakZom.verticalPosition && X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;     
+                    weakZom.horizontalPosition-=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }       
+        if (check == 0){
+            if(Y > weakZom.verticalPosition && X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;     
+                    weakZom.horizontalPosition-=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y > weakZom.verticalPosition && X > weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;     
+                    weakZom.horizontalPosition+=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y < weakZom.verticalPosition && X > weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;     
+                    weakZom.horizontalPosition+=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }  
+
+        if (check == 0){
+            return 0;
+        }
+        
+        if(W != null){
+            W[count].horizontalPosition = weakZom.horizontalPosition;
+            W[count].verticalPosition = weakZom.verticalPosition;
+        }
+        else if(F != null){
+            F[count].horizontalPosition = weakZom.horizontalPosition;
+            F[count].verticalPosition = weakZom.verticalPosition;
+        }
+        else if(S != null){
+            S[count].horizontalPosition = weakZom.horizontalPosition;
+            S[count].verticalPosition = weakZom.verticalPosition;
+        }
+        return 1;
+    }
+    int movToBase(BaseZombie weakZom,WeakZombie[] W,FastZombie[] F,StrongZombie[] S,int count){
+        int X = 5;
+        int Y = 14;      
+        int check = 0;   
+        
+        if (weakZom == null){
+            System.out.println("Zombie null fuera de indice");
+            return 0;
+        }
+        int movZ = weakZom.speed;
+        
+        if(X > weakZom.horizontalPosition){
+            if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition] == 0){
+                tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                weakZom.horizontalPosition+=movZ;                
+                tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;  
+                check = 1;
+            }
+        }
+        if (check == 0){
+            if(X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.horizontalPosition-=movZ;                
                     tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
                     check = 1;
                 }
             }
+        }
+        if (check == 0){
+            if(Y > weakZom.verticalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;                
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y < weakZom.verticalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;                
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y < weakZom.verticalPosition && X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;     
+                    weakZom.horizontalPosition-=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }       
+        if (check == 0){
+            if(Y > weakZom.verticalPosition && X < weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition-movZ][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;     
+                    weakZom.horizontalPosition-=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y > weakZom.verticalPosition && X > weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition+movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition+=movZ;     
+                    weakZom.horizontalPosition+=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }
+        if (check == 0){
+            if(Y < weakZom.verticalPosition && X > weakZom.horizontalPosition){
+                if (tablero.tablero[weakZom.horizontalPosition+movZ][weakZom.verticalPosition-movZ] == 0){
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = 0;
+                    weakZom.verticalPosition-=movZ;     
+                    weakZom.horizontalPosition+=movZ;  
+                    tablero.tablero[weakZom.horizontalPosition][weakZom.verticalPosition] = weakZom.numT;
+                    check = 1;
+                }
+            }    
+        }  
+
+        if (check == 0){
+            return 0;
         }
         
         if(W != null){
@@ -484,12 +1010,11 @@ public final class Interface extends javax.swing.JFrame {
             if (check == 0)
                 check = movToHeroe(weakZom[count],weakZom,null,null,count);
             if (check == 0)
-                check = movToSound(weakZom[count]);
+                check = movToSound(weakZom[count],weakZom,null,null,count);
             if (check == 0)
                 check = movToBase(weakZom[count],weakZom,null,null,count);
             
             count++;
-            System.out.println("--------3");
             
         }                        
         count = 0;
@@ -498,12 +1023,11 @@ public final class Interface extends javax.swing.JFrame {
             if (check == 0)
                 check = movToHeroe(fastZom[count],null,fastZom,null,count);
             if (check == 0)
-                check = movToSound(fastZom[count]);
+                check = movToSound(fastZom[count],null,fastZom,null,count);
             if (check == 0)
                 check = movToBase(fastZom[count],null,fastZom,null,count);
             
             count++;
-            System.out.println("--------2");
         }                        
         count = 0;
         while(strongZom[count] != null){                      
@@ -511,12 +1035,11 @@ public final class Interface extends javax.swing.JFrame {
             if (check == 0)
                 check = movToHeroe(strongZom[count],null,null,strongZom,count); 
             if (check == 0)
-                check = movToSound(fastZom[count]);
+                check = movToSound(strongZom[count],null,null,strongZom,count);
             if (check == 0)
-                check = movToBase(fastZom[count],null,null,strongZom,count);
+                check = movToBase(strongZom[count],null,null,strongZom,count);
             
             count++;
-            System.out.println("--------1");
         } 
     }
     
@@ -545,7 +1068,10 @@ public final class Interface extends javax.swing.JFrame {
             int numWeak = 0;
             int numFast = 0;
             int numStro = 0;
-  
+            int numSwor = 0;
+            int numAxe = 0;
+            int numSma = 0;
+            int numRif = 0;
             while (columna != 15){
                 while (fila != 20){                   
                     tableroJ[fila][columna].setSize(40, 40);
@@ -575,37 +1101,130 @@ public final class Interface extends javax.swing.JFrame {
                     else if (tablero.tablero[fila][columna] == 5){
                         tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/zombieW.png")));  
                         if(weakZom[numWeak]==null){
-                            weakZom[numWeak] = new WeakZombie(columna,fila);
-                            if (numWeak != 20){
-                                numWeak++;
-                            }                        
+                            weakZom[numWeak] = new WeakZombie(columna,fila);                                                    
                         }                        
+                        if (numWeak != 50){
+                                numWeak++;
+                            }
                     }
                     else if (tablero.tablero[fila][columna] == 6){
                         tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/zombieF.png"))); 
                         if(fastZom[numFast]==null){
-                            fastZom[numFast] = new FastZombie(columna,fila); 
-                            if (numFast != 5){
+                            fastZom[numFast] = new FastZombie(columna,fila);
+                        }             
+                        if (numFast != 50){
                                 numFast++;
                             }
-                        }                        
                     }
                     else if (tablero.tablero[fila][columna] == 7){
                         tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/zombieS.png")));    
                         if(strongZom[numStro]==null){
-                            strongZom[numStro] = new StrongZombie(columna,fila); 
-                            if (numStro != 5){
+                            strongZom[numStro] = new StrongZombie(columna,fila);                             
+                        }                        
+                        if (numStro != 50){
                                 numStro++;
                             }
-                        }                        
                     }
                     else if (tablero.tablero[fila][columna] == 8){
                         tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/lapida.png")));                
                     }
-                    else if (tablero.tablero[fila][columna] == 9){
-                        tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/spawnIm.png")));                
-                    }
+                    else if (tablero.tablero[fila][columna] == 9){                        
+                        if(level == 1){
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/spawnIm.png")));
+                            if (spawns[0] == null){
+                                spawns[0]= new Snipper(columna,fila);  
+                            }                                
+                        }                        
+                        if(level == 5){
+                            tablero.tablero[19][9] = 9; 
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/spawnIm.png")));
+                            if (spawns[1] == null){                               
+                               spawns[1]= new Snipper(columna,fila);   
+                            }
+                        }
+                        if(level == 10){
+                            tablero.tablero[17][7] = 9;
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/spawnIm.png")));
+                            if (spawns[2] == null){                                
+                                spawns[2]= new Snipper(columna,fila);   
+                            }
+                        }
+                        if(level == 15){  
+                            tablero.tablero[17][12] = 9;
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/spawnIm.png")));
+                            if (spawns[3] == null){
+                                spawns[3]= new Snipper(columna,fila);     
+                            }                             
+                        }
+                    }               
+                    else if (tablero.tablero[fila][columna] == 10){
+                        if(clenaIt==0){
+                        tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/swordIm.png")));
+                            if(sword[numSwor]== null){
+                                sword[numSwor] = new Sword();   
+                                sword[numSwor].horizontalPosition = fila;
+                                sword[numSwor].verticalPosition = columna;
+                            }                        
+                            if (numSwor != 20){
+                                    numSwor++;
+                            }
+                        }else{
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/empty.png")));
+                            tablero.tablero[fila][columna]=0;
+                        }
+                                            
+                    }                    
+                    else if (tablero.tablero[fila][columna] == 11){
+                        if(clenaIt==0){
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/axeIm.png")));
+                            if(axe[numAxe]== null){
+                                axe[numAxe] = new Axe();   
+                                axe[numAxe].horizontalPosition = fila;
+                                axe[numAxe].verticalPosition = columna;
+                            }                        
+                            if (numAxe != 20){
+                                    numAxe++;
+                            }  
+                        }else{
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/empty.png")));
+                            tablero.tablero[fila][columna]=0;
+                        }
 
+                    }
+                    else if (tablero.tablero[fila][columna] == 12){
+                        if(clenaIt==0){
+                        tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/smallGIm.png")));
+                            if(smallGun[numSma]== null){
+                                smallGun[numSma] = new SmallGun();   
+                                smallGun[numSma].horizontalPosition = fila;
+                                smallGun[numSma].verticalPosition = columna;
+                            }                        
+                            if (numSma != 20){
+                                    numSma++;
+                            } 
+                        }else{
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/empty.png")));
+                            tablero.tablero[fila][columna]=0;
+                        }
+ 
+                    }
+                    else if (tablero.tablero[fila][columna] == 13){
+                        if(clenaIt==0){
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/rifleIm.png")));
+                            if(rifle[numRif]== null){
+                                rifle[numRif] = new Rifle();   
+                                rifle[numRif].horizontalPosition = fila;
+                                rifle[numRif].verticalPosition = columna;
+                            }                        
+                            if (numRif != 20){
+                                    numRif++;
+                            }
+                        }else{
+                            tableroJ[fila][columna].setIcon(new ImageIcon(getClass().getResource("/imagen/empty.png")));
+                            tablero.tablero[fila][columna]=0;
+                        }
+
+                    }
                     tableroJ[fila][columna].setLocation(posF, posC);
                     tableroJ[fila][columna].setOpaque(rootPaneCheckingEnabled);
                     tableroJ[fila][columna].setText("");
@@ -619,6 +1238,7 @@ public final class Interface extends javax.swing.JFrame {
                 columna++;                
             } 
             searchTurn();
+            showEst();
         }
     });
         
@@ -640,6 +1260,13 @@ public final class Interface extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         getObj = new javax.swing.JButton();
         attackZom = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        estad = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        textRes = new javax.swing.JTextArea();
+        textLev = new javax.swing.JTextField();
+        textLev1 = new javax.swing.JTextField();
+        textLev2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setForeground(java.awt.Color.black);
@@ -655,7 +1282,7 @@ public final class Interface extends javax.swing.JFrame {
         mapa.setLayout(mapaLayout);
         mapaLayout.setHorizontalGroup(
             mapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 650, Short.MAX_VALUE)
+            .addGap(0, 651, Short.MAX_VALUE)
         );
         mapaLayout.setVerticalGroup(
             mapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -706,6 +1333,11 @@ public final class Interface extends javax.swing.JFrame {
 
         getObj.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/getIm.png"))); // NOI18N
         getObj.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        getObj.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getObjActionPerformed(evt);
+            }
+        });
 
         attackZom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen/attackIm.png"))); // NOI18N
         attackZom.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -715,66 +1347,144 @@ public final class Interface extends javax.swing.JFrame {
             }
         });
 
+        estad.setColumns(20);
+        estad.setRows(5);
+        estad.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        estad.setEnabled(false);
+        jScrollPane1.setViewportView(estad);
+
+        textRes.setColumns(20);
+        textRes.setRows(5);
+        textRes.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        textRes.setEnabled(false);
+        jScrollPane2.setViewportView(textRes);
+
+        textLev.setBackground(new java.awt.Color(51, 0, 204));
+        textLev.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        textLev.setForeground(new java.awt.Color(255, 255, 255));
+        textLev.setText("Level\n");
+        textLev.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        textLev.setEnabled(false);
+        textLev.setFocusable(false);
+        textLev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textLevActionPerformed(evt);
+            }
+        });
+
+        textLev1.setBackground(new java.awt.Color(140, 120, 18));
+        textLev1.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        textLev1.setForeground(new java.awt.Color(255, 255, 255));
+        textLev1.setText("Respuesta");
+        textLev1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        textLev1.setEnabled(false);
+        textLev1.setFocusable(false);
+        textLev1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textLev1ActionPerformed(evt);
+            }
+        });
+
+        textLev2.setBackground(new java.awt.Color(140, 120, 18));
+        textLev2.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
+        textLev2.setForeground(new java.awt.Color(255, 255, 255));
+        textLev2.setText("Stats");
+        textLev2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        textLev2.setEnabled(false);
+        textLev2.setFocusable(false);
+        textLev2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textLev2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ControlLayout = new javax.swing.GroupLayout(Control);
         Control.setLayout(ControlLayout);
         ControlLayout.setHorizontalGroup(
             ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ControlLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ControlLayout.createSequentialGroup()
-                        .addGap(44, 44, 44)
-                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(up, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(down, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(78, 78, 78)
                         .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(ControlLayout.createSequentialGroup()
-                                .addComponent(getObj, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(49, 49, 49)
+                                .addComponent(up, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(ControlLayout.createSequentialGroup()
-                                .addComponent(attackZom, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addContainerGap()
+                                .addComponent(textLev1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(textLev, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ControlLayout.createSequentialGroup()
-                        .addComponent(left, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(right, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap()
+                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ControlLayout.createSequentialGroup()
+                                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(ControlLayout.createSequentialGroup()
+                                        .addGap(42, 42, 42)
+                                        .addComponent(down, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(80, 80, 80)
+                                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(getObj, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(attackZom, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(ControlLayout.createSequentialGroup()
+                                        .addComponent(left, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(26, 26, 26)
+                                        .addComponent(right, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(ControlLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(ControlLayout.createSequentialGroup()
+                                        .addGap(128, 128, 128)
+                                        .addComponent(textLev2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         ControlLayout.setVerticalGroup(
             ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ControlLayout.createSequentialGroup()
-                .addContainerGap(129, Short.MAX_VALUE)
-                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(ControlLayout.createSequentialGroup()
+                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textLev, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textLev1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ControlLayout.createSequentialGroup()
-                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(left, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(right, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addComponent(textLev2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(down, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12))
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
                     .addGroup(ControlLayout.createSequentialGroup()
-                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(attackZom, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(up, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(getObj, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36))))
+                        .addGap(0, 30, Short.MAX_VALUE)
+                        .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ControlLayout.createSequentialGroup()
+                                .addComponent(up, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(left, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(right, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(ControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(down, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(12, 12, 12))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ControlLayout.createSequentialGroup()
+                                .addComponent(attackZom, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(getObj, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36))))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(mapa, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE)
-                    .addComponent(Control, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 135, Short.MAX_VALUE))
+            .addComponent(mapa, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
+            .addComponent(Control, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -798,6 +1508,8 @@ public final class Interface extends javax.swing.JFrame {
                     tablero.tablero[turnOff.horizontalPosition][turnOff.verticalPosition] = tmp;
                     mov--;
                 }
+            }else{
+                textRes.setText("No tienes más movimientos");
             }
         }
     }//GEN-LAST:event_upActionPerformed
@@ -813,6 +1525,8 @@ public final class Interface extends javax.swing.JFrame {
                     tablero.tablero[turnOff.horizontalPosition][turnOff.verticalPosition] = tmp;
                     mov--;
                 }
+            }else{
+                textRes.setText("No tienes más movimientos");
             }
         }
     }//GEN-LAST:event_rightActionPerformed
@@ -828,6 +1542,8 @@ public final class Interface extends javax.swing.JFrame {
                     tablero.tablero[turnOff.horizontalPosition][turnOff.verticalPosition] = tmp;
                     mov--;
                 }
+            }else{
+                textRes.setText("No tienes más movimientos");
             }
         }
     }//GEN-LAST:event_downActionPerformed
@@ -843,6 +1559,8 @@ public final class Interface extends javax.swing.JFrame {
                     tablero.tablero[turnOff.horizontalPosition][turnOff.verticalPosition] = tmp;
                     mov--;
                 }
+            }else{
+                textRes.setText("No tienes más movimientos");
             }
         }
     }//GEN-LAST:event_leftActionPerformed
@@ -894,15 +1612,20 @@ public final class Interface extends javax.swing.JFrame {
                     X++;
                     check = 1;
                 }
-
+                int random = (int) Math.floor(Math.random()*(4)+1); //random between 1 and 12
                 if (check == 1){                        
                     while(weakZom[count] != null){
                         if(weakZom[count].verticalPosition == Y && weakZom[count].horizontalPosition == X){
                             weakZom[count].resistance-=turnOff.damage;
-                            System.out.println("Le pegaste "+turnOff.damage+" al zombi debil en la casilla X= "+X+" Y= "+Y);
+                            textRes.setText("Le pegaste "+turnOff.damage+" de daño a un zombi débil");
                             if (weakZom[count].resistance <= 0){
-                                tablero.tablero[weakZom[count].horizontalPosition][weakZom[count].verticalPosition] = 0;
-                                System.out.println("Murio el zombie W");
+                                if (random <= 4){
+                                    random +=9;
+                                    tablero.tablero[weakZom[count].horizontalPosition][weakZom[count].verticalPosition] = random;
+                                }else{
+                                    tablero.tablero[weakZom[count].horizontalPosition][weakZom[count].verticalPosition] = 0;
+                                }                                   
+                                textRes.setText("Mataste al zombie débil");
                                 weakZom[count]=null;
                             }
                                                 
@@ -913,10 +1636,10 @@ public final class Interface extends javax.swing.JFrame {
                     while(fastZom[count] != null){
                         if(fastZom[count].verticalPosition == Y && fastZom[count].horizontalPosition == X){
                             fastZom[count].resistance-=turnOff.damage;
-                            System.out.println("Le pegaste "+turnOff.damage+" al zombi rapdio en la casilla X= "+X+" Y= "+Y);
+                            textRes.setText("Le pegaste "+turnOff.damage+" de daño al zombi rapido");
                             if (fastZom[count].resistance <= 0){
                                 tablero.tablero[fastZom[count].horizontalPosition][fastZom[count].verticalPosition] = 0;
-                                System.out.println("Murio el zombie F");
+                                textRes.setText("Mataste a un zombie rapido");
                                 fastZom[count]=null;
                             }
                         }  
@@ -926,176 +1649,154 @@ public final class Interface extends javax.swing.JFrame {
                     while(strongZom[count] != null){
                         if(strongZom[count].verticalPosition == Y && strongZom[count].horizontalPosition == X){
                             strongZom[count].resistance-=turnOff.damage;
-                            System.out.println("Le pegaste "+turnOff.damage+" al zombi fuerte en la casilla X= "+X+" Y= "+Y);
+                            textRes.setText("Le pegaste "+turnOff.damage+" de daño al zombi fuerte");
                             if (strongZom[count].resistance <= 0){
                                 tablero.tablero[strongZom[count].horizontalPosition][strongZom[count].verticalPosition] = 0;
-                                System.out.println("Murio el zombie S");
+                                textRes.setText("Mataste a un zombie fuerte");
                                 strongZom[count]=null;
                             }
                         }
                         count++;
                     }                   
                 }else{
-                    System.out.println("Mejora tu punteria");
+                    textRes.setText("Mejora tu punteria, desperdiciate un ataque.");
                 }
             att--;
-            }
-            
+            }else{
+                textRes.setText("No tienes más ataques");
+            }            
     }//GEN-LAST:event_attackZomActionPerformed
+
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*    
-    public void stopObs1(int bot, JLabel obs, JLabel elec){        
-        if ( elec.getX() <= obs.getX()+ 25 && elec.getX() >= obs.getX()- 25 && elec.getY() <= obs.getY()+ 25 && elec.getY() >= obs.getY()- 25){            
-            if (bot == 1){ // 1 igual izquierda
-            elec.setLocation(elec.getX()+45,elec.getY());
-            }
-            if (bot == 2){// 2 igual derecha
-            elec.setLocation(elec.getX()-45,elec.getY());         
-            }     
-            if (bot == 3){ // 3 igual abajo
-            elec.setLocation(elec.getX(),elec.getY()-45);
-            }
-            if (bot == 4){// 4 igual arriba
-            elec.setLocation(elec.getX(),elec.getY()+45);
-            }
+    void equip(Items item){
+        if (turnOff.numT == 4) {
+            // Destroyer increases the damage of him for the quantity of his weapons
+            turnOff.damage += 3;
+        } else if (turnOff.numT == 2){
+            // Snipper increases the damage and have one more turn for the quantity of his weapons
+            turnOff.damage += 3;
+            turnOff.turns += 2;
         }
+        // asigns stats
+        turnOff.resistance += item.resistance;
+        turnOff.damage += item.damage;
+        turnOff.turns += item.range;
+        turnOff.noise += item.noise;        
     }
+    
+    
+    
+    
+    private void getObjActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getObjActionPerformed
+        int X = turnOff.horizontalPosition;
+        int Y = turnOff.verticalPosition;
         
-    public void hitZm(){        
-        if ( pjSel.getX()-10 <= zomB.getX()-45 && pjSel.getX()+10 >= zomB.getX()-45       &&   pjSel.getY()-10 <= zomB.getY() && pjSel.getY()+10 >= zomB.getY()) {
-            System.out.println("Le pegaste al zombie en la celda 5 un total de "+(clas.damage)+" de daño.");
+        if(13 >= tablero.tablero[X-1][Y-1] && tablero.tablero[X-1][Y-1] >= 10){
+            X--;
+            Y--;
         }
-        else if( pjSel.getX()-10 <= zomB.getX()+45 && pjSel.getX()+10 >= zomB.getX()+45   &&   pjSel.getY()-10 <= zomB.getY() && pjSel.getY()+10 >= zomB.getY()) {
-            System.out.println("Le pegaste al zombie celda 4 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X][Y-1] && tablero.tablero[X][Y-1] >= 10){
+            Y--;
         }
-        else if( pjSel.getY()-10 <= zomB.getY()+45 && pjSel.getY()+10 >= zomB.getY()+45   &&  pjSel.getX()-10 <= zomB.getX() && pjSel.getX()+10 >= zomB.getX()){
-            System.out.println("Le pegaste al zombie celda 2 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X+1][Y-1] && tablero.tablero[X+1][Y-1] >= 10){
+            X++;
+            Y--;
         }
-        else if( pjSel.getY()-10 <= zomB.getY()-45 && pjSel.getY()+10 >= zomB.getY()-45   &&  pjSel.getX()-10 <= zomB.getX() && pjSel.getX()+10 >= zomB.getX()){
-            System.out.println("Le pegaste al zombie celda 7 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X-1][Y] && tablero.tablero[X-1][Y] >= 10){
+            X--;
         }
-        else if( pjSel.getY()-10 <= zomB.getY()+45 && pjSel.getY()+10 >= zomB.getY()+45 && pjSel.getX()-10 <= zomB.getX()+45 && pjSel.getX()+10 >= zomB.getX()+45){
-            System.out.println("Le pegaste al zombie celda 1 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X+1][Y] && tablero.tablero[X+1][Y] >= 10){
+            X++;
         }
-        else if( pjSel.getY()-10 <= zomB.getY()+45 && pjSel.getY()+10 >= zomB.getY()+45 && pjSel.getX()-10 <= zomB.getX()-45 && pjSel.getX()+10 >= zomB.getX()-45){
-            System.out.println("Le pegaste al zombie celda 3 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X-1][Y+1] && tablero.tablero[X-1][Y+1] >= 10){
+            Y++;
+            X--;
         }
-        else if( pjSel.getY()-10 <= zomB.getY()-45 && pjSel.getY()+10 >= zomB.getY()-45 && pjSel.getX()-10 <= zomB.getX()+45 && pjSel.getX()+10 >= zomB.getX()+45){
-            System.out.println("Le pegaste al zombie celda 6 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X][Y+1] && tablero.tablero[X][Y+1] >= 10){
+            Y++;
         }
-        else if( pjSel.getY()-10 <= zomB.getY()-45 && pjSel.getY()+10 >= zomB.getY()-45 && pjSel.getX()-10 <= zomB.getX()-45 && pjSel.getX()+10 >= zomB.getX()-45){
-            System.out.println("Le pegaste al zombie celda 8 un total de  "+clas.damage+" de daño.");
+        else if(13 >= tablero.tablero[X+1][Y+1] && tablero.tablero[X+1][Y+1] >= 10){
+            Y++;
+            X++;
+        }
+        
+        if (X != turnOff.horizontalPosition || Y != turnOff.verticalPosition){
+            int count = 0;
+            while(count != 20){
+                if(sword[count]!= null){
+                    if (sword[count].horizontalPosition == X && sword[count].verticalPosition == Y){
+                        if(turnOff.mountItem < 2){
+                            equip(sword[count]);
+                            turnOff.mountItem+=1;
+                            tablero.tablero[X][Y]=0;
+                            textRes.setText("Agarraste una espada");
+                        }else{
+                            textRes.setText(" No puedes agarrar mas objetos tienes el inventario lleno");
+                        }
+                        break;                
+                    }
+                }
+                if(axe[count]!= null){
+                    if (axe[count].horizontalPosition == X && axe[count].verticalPosition == Y){
+                        if(turnOff.mountItem < 2){
+                            equip(axe[count]);
+                            turnOff.mountItem+=1;
+                            tablero.tablero[X][Y]=0;
+                            textRes.setText("Agarraste un hacha");
+                        }else{
+                            textRes.setText(" No puedes agarrar mas objetos tienes el inventario lleno");
+                        }
+                        break;
+                    }    
+                }
+                if(rifle[count]!= null){
+                    if (rifle[count].horizontalPosition == X && rifle[count].verticalPosition == Y){
+                        if(turnOff.mountItem < 2){
+                            equip(rifle[count]);
+                            turnOff.mountItem+=1;
+                            tablero.tablero[X][Y]=0;
+                            textRes.setText("Agarraste un rifle");
+                        }else{
+                            textRes.setText("No puedes agarrar mas objetos tienes el inventario lleno");
+                        }
+                        break;
+                    }  
+                }
+                if(smallGun[count]!= null){
+                    if (smallGun[count].horizontalPosition == X && smallGun[count].verticalPosition == Y){
+                        if(turnOff.mountItem < 2){
+                            equip(smallGun[count]);
+                            turnOff.mountItem+=1;
+                            tablero.tablero[X][Y]=0;
+                            textRes.setText("Agarraste una pistola");
+                        }
+                        else{
+                            textRes.setText("No puedes agarrar mas objetos tienes el inventario lleno");
+                        }
+                        break;
+                    }
+                }
+                count++;
+            }
         }
         else{
-            System.out.println("No le pegaste a nada.");
+            textRes.setText("No encontraste nada en el suelo.");
         }       
-    }
         
-    public void ShowBot(JLabel PJ) {   
-        jButton1.setLocation(PJ.getX()+ 80,PJ.getY()+ 30);        
-        jButton2.setLocation(PJ.getX()+ 40,PJ.getY()+ 0);        
-        jButton3.setLocation(PJ.getX()+ 80,PJ.getY()- 30);
-        jButton4.setLocation(PJ.getX()+ 120,PJ.getY());
-        hitZm.setLocation(PJ.getX()+ 80,PJ.getY()+ 60);
-    }
-    public void noShowBot() {   
-        jButton1.setLocation(3000,3000);      
-        jButton2.setLocation(3000,3000);   
-        jButton3.setLocation(3000,3000);   
-        jButton4.setLocation(3000,3000);   
-        hitZm.setLocation(3000,3000);   
-    }
-    
-    public void movZom() {
-    Timer movZombie = new Timer(600, (ActionEvent ae) -> {
-        
-        if(zm1.getX()<500){
-        zm1.setLocation(zm1.getX()+45,zm1.getY());
-        }
-        else{
-        zm1.setLocation(38,zm1.getY());
-        }
-        
-        stopObs1(2,jLabel1,zm1);
-        stopObs1(2,pj1,zm1);
-        stopObs1(2,pj2,zm1);
-        stopObs1(2,pj3,zm1);
-        
-        if ( zm1.getX()-10 <= base.getX()-45 && zm1.getX()+10 >= base.getX()-45       &&   zm1.getY()-10 <= base.getY() && zm1.getY()+10 >= base.getY()) {
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getX()-10 <= base.getX()+45 && zm1.getX()+10 >= base.getX()+45   &&   zm1.getY()-10 <= base.getY() && zm1.getY()+10 >= base.getY()) {
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getY()-10 <= base.getY()+45 && zm1.getY()+10 >= base.getY()+45   &&  zm1.getX()-10 <= base.getX() && zm1.getX()+10 >= base.getX()){
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getY()-10 <= base.getY()-45 && zm1.getY()+10 >= base.getY()-45   &&  zm1.getX()-10 <= base.getX() && zm1.getX()+10 >= base.getX()){
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getY()-10 <= base.getY()+45 && zm1.getY()+10 >= base.getY()+45 && zm1.getX()-10 <= base.getX()+45 && zm1.getX()+10 >= base.getX()+45){
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getY()-10 <= base.getY()+45 && zm1.getY()+10 >= base.getY()+45 && zm1.getX()-10 <= base.getX()-45 && zm1.getX()+10 >= base.getX()-45){
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getY()-10 <= base.getY()-45 && zm1.getY()+10 >= base.getY()-45 && zm1.getX()-10 <= base.getX()+45 && zm1.getX()+10 >= base.getX()+45){
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }
-        else if( zm1.getY()-10 <= base.getY()-45 && zm1.getY()+10 >= base.getY()-45 && zm1.getX()-10 <= base.getX()-45 && zm1.getX()+10 >= base.getX()-45){
-            JOptionPane.showMessageDialog(null, "GAME OVER");
-        }            
-                       
-    });
+    }//GEN-LAST:event_getObjActionPerformed
 
-    movZombie.start();        
-}
-    
-    */
+    private void textLevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textLevActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textLevActionPerformed
 
+    private void textLev1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textLev1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textLev1ActionPerformed
+
+    private void textLev2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textLev2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textLev2ActionPerformed
+  
     /**
      * @param args the command line arguments
      */
@@ -1142,11 +1843,18 @@ public final class Interface extends javax.swing.JFrame {
     public javax.swing.JPanel Control;
     public javax.swing.JButton attackZom;
     public javax.swing.JButton down;
+    public javax.swing.JTextArea estad;
     public javax.swing.JButton getObj;
     public javax.swing.JButton jButton1;
+    public javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JButton left;
     public javax.swing.JPanel mapa;
     public javax.swing.JButton right;
+    public javax.swing.JTextField textLev;
+    public javax.swing.JTextField textLev1;
+    public javax.swing.JTextField textLev2;
+    public javax.swing.JTextArea textRes;
     public javax.swing.JButton up;
     // End of variables declaration//GEN-END:variables
 }
